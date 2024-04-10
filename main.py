@@ -3,9 +3,9 @@ from fastapi import FastAPI, HTTPException
 from models import Recipe
 
 app = FastAPI()
-
-
 recipes_db: List[Recipe] = []
+
+err_not_found = "Recette non trouvée"
 
 @app.get("/")
 def read_root():
@@ -26,7 +26,7 @@ def read_recipe(recipe_id: int):
     for recipe in recipes_db:
         if recipe.id == recipe_id:
             return recipe
-    raise HTTPException(status_code=404, detail="Recipe not found")
+    raise HTTPException(status_code=404, detail=err_not_found)
 
 @app.put("/recipes/{recipe_id}", response_model=Recipe)
 def update_recipe(recipe_id: int, recipe_update: Recipe):
@@ -37,12 +37,12 @@ def update_recipe(recipe_id: int, recipe_update: Recipe):
             recipe.steps = recipe_update.steps
             recipe.ingredients = recipe_update.ingredients
             return recipe
-    raise HTTPException(status_code=404, detail="Recipe not found")
+    raise HTTPException(status_code=404, detail=err_not_found)
 
 @app.delete("/recipes/{recipe_id}")
 def delete_recipe(recipe_id: int):
     for recipe in recipes_db:
         if recipe.id == recipe_id:
             recipes_db.remove(recipe)
-            return {"message": "Recipe deleted successfully"}
-    raise HTTPException(status_code=404, detail="Recipe not found")
+            return {"message": "Recette supprimée avec succé"}
+    raise HTTPException(status_code=404, detail=err_not_found)
